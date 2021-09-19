@@ -147,11 +147,11 @@
 						error: (error) => {
 
 							if(error.status == 404){
-								$(".message").append(`<li class="list-group-item list-group-item-success">${error.responseJSON.message}</li>`)
+								$(".message").append(`<li class="list-group-item list-group-item-danger">${error.responseJSON.message}</li>`)
 							}
 
 							if(error.status == 401){
-								$(".message").append(`<li class="list-group-item list-group-item-success">${error.responseJSON.message}</li>`)
+								$(".message").append(`<li class="list-group-item list-group-item-danger">${error.responseJSON.message}</li>`)
 							}
 						}
 
