@@ -83,7 +83,7 @@
 
 			$("#submitButton").on("click", () => {
 
-				const fullname = $("#fullName").val()
+				const fullName = $("#fullName").val()
 				const email = $("#email").val()
 				const password = $("#password").val()
 				const confirmPassword = $("#confirmPassword").val()
@@ -92,9 +92,9 @@
 
 				if (!fullName || !email || !password || !confirmPassword) error.push("Please fillup all the details.")
 
-				if (!emailRegex.test(email)) error.push("Please enter a valid email.")
+				if (email && !emailRegex.test(email)) error.push("Please enter a valid email.")
 
-				if (password !== confirmPassword) error.push("Password and Confirm Password must be same.")
+				if (password && confirmPassword && password !== confirmPassword) error.push("Password and Confirm Password must be same.")
 
 				$(".message").html("")
 
@@ -105,11 +105,11 @@
 				if (!error.length) {
 
 					const userData = JSON.stringify({
-						fullname,
+						fullName,
 						email,
 						password
 					})
-
+					
 					$.ajax({
 						url: "http://localhost:8000/signup",
 						headers: {
@@ -125,11 +125,10 @@
 							$("#password").val("")
 							$("#confirmPassword").val("")
 
-							$(".message").append(`<li class="list-group-item list-group-item-success">${response.message}</li>`)
-
 							if (response.success) {
 								await localStorage.setItem("userID", response.userID)
 								await localStorage.setItem("authorizationToken", response.authorizationToken)
+								$(".message").append(`<li class="list-group-item list-group-item-success">${response.message}</li>`)
 
 								setTimeout(() => {
 									$(".message").append(`<li class="list-group-item list-group-item-success">Redirecting to Dashboard.</li>`)
@@ -137,9 +136,15 @@
 
 								setTimeout(() => {
 									window.location.href = "dashboard.html"
-								}, 3000)
+								}, 1500)
+							}
+							else{
+								$(".message").append(`<li class="list-group-item list-group-item-danger">${response.message}</li>`)
 							}
 
+						},
+						error: (error) => {
+							$(".message").append(`<li class="list-group-item list-group-item-danger">${error.responseJSON.message}</li>`)
 						}
 					})
 				}

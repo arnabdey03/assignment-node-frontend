@@ -70,7 +70,6 @@
 
 					url: "http://localhost:8000/check-token",
 					headers: {
-						"Content-Type": "application/json",
 						"Authorization": `Bearer ${authorizationToken}`
 					},
 					method: "GET",
@@ -84,7 +83,12 @@
 					},
 					error: (error) => {
 
-						console.clear()
+						if(error.status == 401){
+							console.log("Unauthorized To Access")
+						}
+						if(error.status == 403){
+							console.log("Forbidden Access")
+						}
 					}
 
 				})
@@ -100,7 +104,7 @@
 
 				if (!email || !password) error.push("Please fill all the details.")
 
-				if (!emailRegex.test(email)) error.push("Please enter a valid email.")
+				if (email && !emailRegex.test(email)) error.push("Please enter a valid email.")
 
 				error.forEach((item, index) => {
 					$(".message").append(`<li class="list-group-item list-group-item-danger">${item}</li>`)
@@ -128,8 +132,6 @@
 
 							$(".message").append(`<li class="list-group-item list-group-item-success">${response.message}</li>`)
 
-							console.log(response)
-
 							if (response.success) {
 								await localStorage.setItem("userID", response.userID)
 								await localStorage.setItem("authorizationToken", response.authorizationToken)
@@ -140,19 +142,13 @@
 
 								setTimeout(() => {
 									window.location.href = "dashboard.html"
-								}, 3000)
+								}, 2000)
 							}
 
 						},
 						error: (error) => {
 
-							if(error.status == 404){
-								$(".message").append(`<li class="list-group-item list-group-item-danger">${error.responseJSON.message}</li>`)
-							}
-
-							if(error.status == 401){
-								$(".message").append(`<li class="list-group-item list-group-item-danger">${error.responseJSON.message}</li>`)
-							}
+							$(".message").append(`<li class="list-group-item list-group-item-danger">${error.responseJSON.message}</li>`)
 						}
 
 					})
